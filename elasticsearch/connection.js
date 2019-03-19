@@ -1,8 +1,10 @@
 var elasticsearch=require('elasticsearch');
 
+var elasticHost = process.env.ELASTIC_SERVICE_NAME || "localhost"
+
 var client = new elasticsearch.Client( {  
   hosts: [
-    'http://localhost:9200/'
+    'http://' + elasticHost + ':9200/'
   ]
 });
 

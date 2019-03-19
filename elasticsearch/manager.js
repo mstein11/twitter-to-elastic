@@ -32,16 +32,17 @@ var manager = {
         if (err == null && resp.status == "green") {
           clusterReadyTries = 0;
           callback(true);
+          return;
         } 
         if (clusterReadyTries >= 5) {
           callback(false);
           return;
         }
         clusterReadyTries++;
-        console.warn("--- Cluster Not Ready - Waiting 5 Seconds to try again for maximum of 5 times");
+        console.warn("--- Cluster Not Ready - Waiting 10 Seconds to try again for maximum of 5 times");
         setTimeout(function() {
           manager.clusterReady(callback);
-        }, 5000);        
+        }, 10000);        
       });
     },
     createIndex: function(callback) {

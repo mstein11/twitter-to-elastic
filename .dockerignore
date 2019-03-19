@@ -1,2 +1,3 @@
 setConfig.sh
 twitter-conf.env
+elastic-conf.env
