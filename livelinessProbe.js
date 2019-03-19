@@ -1,0 +1,1 @@
+var esManager = require('./elasticsearch/manager');

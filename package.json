@@ -1,0 +1,16 @@
+{
+  "name": "twitter-streamer",
+  "version": "1.0.0",
+  "description": "A Project to hook into the twitter streaming api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marius Stein",
+  "license": "MIT",
+  "dependencies": {
+    "elasticsearch": "^15.4.1",
+    "get-json": "^1.0.1",
+    "twit": "^2.2.11"
+  }
+}
