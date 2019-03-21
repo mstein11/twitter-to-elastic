@@ -48,15 +48,31 @@ var manager = {
     createIndex: function(callback) {
       client.indices.exists({ index: 'twitter'})
         .then(function(exists) {
+          console.log("exists: ", exists);
           if (exists) {
             callback();
             return;
           }
-          client.indices.create({ index: 'twitter',}).catch(function (error) {
+          client.indices.create({ index: 'twitter'}).catch(function (error) {
             console.log("-- Error Creating Index --");
             console.trace(error.message);
           }).then(function (res) {
             console.log("-- Created Index --");
+            client.indices.putMapping({
+              index: 'twitter',
+              type: 'tweet',
+              body: {
+              properties: { 
+                  created_at: { 
+                    "type":   "date",
+                    "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||EEE MMM dd HH:mm:ss ZZ YYYY"
+                   }
+              }
+            }
+          });
+          console.log("-- Put Mapping --");
+
+
             callback();
           });
       }).catch(function(reason) {
