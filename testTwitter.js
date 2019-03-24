@@ -1,5 +1,5 @@
 var twitterManager = require('./twitter/manager');
 
-twitterManager.listenOnStream(['#trump'], function(tweet) {
+twitterManager.listenOnStream(['#maga'], function(tweet) {
     console.log(tweet);
 }); 

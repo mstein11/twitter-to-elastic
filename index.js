@@ -25,7 +25,7 @@ function clusterReady() {
     if (tweet.quoted_status) {
       tweet.quoted_status.extended_tweet = null;
     }
-
+    tweet.version = '1.0.0.0';
     esManager.add(tweet, function(err, res, status) {
       console.log("Added tweet with id: ", tweet.id);
     }, function(error) {

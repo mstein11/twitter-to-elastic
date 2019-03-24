@@ -7,7 +7,7 @@ var manager = {
         if (filter == null) {
             filter = twitterConfig.streamConfig.query;
         }
-        var stream = this.T.stream('statuses/filter', {track: filter})
+        var stream = this.T.stream('statuses/filter', {track: filter, tweet_mode: "extended" })
         stream.on('tweet', function (tweet) {
             callback(tweet);
         })
