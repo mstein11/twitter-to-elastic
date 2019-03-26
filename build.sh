@@ -1,3 +1,4 @@
 docker build . -t twitter-to-elastic 
-docker tag twitter-to-elastic mariusstein77/twitter-to-elastic:latest
-docker push mariusstein77/twitter-to-elastic:latest
+commitSha=$(git rev-parse HEAD)
+docker tag twitter-to-elastic mariusstein77/twitter-to-elastic:$commitSha
+docker push mariusstein77/twitter-to-elastic:$commitSha

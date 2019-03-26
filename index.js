@@ -47,8 +47,6 @@ var prepareTweet = function(tweet) {
     url: user.url,
     description: user. description
   };
-  tweet.entities = null;
-  tweet.extended_entities = null;
 
   var tweets = [];
   var users = [];
