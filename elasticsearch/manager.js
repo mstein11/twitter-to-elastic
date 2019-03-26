@@ -1,12 +1,18 @@
 var client = require('./connection.js');
-
+var mappings = require('./mappings.js');
+var indexes = require('./indexes.js');
 
 clusterReadyTries = 0;
 var manager = {
-    add: function(toAdd, callback, errCallback) {
+    add: function(index, toAdd, callback, errCallback) {
+        if (!indexes.allIndexes.includes(index)) {
+          throw "Index " + index + " doesn't exist";
+        }
+
+        var type = mappings[index].type;
         client.index({
-            index: 'twitter',
-            type: 'tweet',
+            index: index,
+            type: type,
             id: toAdd.id,
             body: toAdd
           })
@@ -29,7 +35,7 @@ var manager = {
     },
     clusterReady: function(callback) {
       client.cluster.health({},function(err, resp) { 
-        if (err == null && resp.status == "green") {
+        if (err == null && resp.status != "red") {
           clusterReadyTries = 0;
           callback(true);
           return;
@@ -39,45 +45,43 @@ var manager = {
           return;
         }
         clusterReadyTries++;
-        console.warn("--- Cluster Not Ready - Waiting 10 Seconds to try again for maximum of 5 times");
+        console.warn("--- Cluster Not Ready - Waiting 10 Seconds to try again for maximum of 5 times. Got the following error:");
+        console.warn(resp);
         setTimeout(function() {
           manager.clusterReady(callback);
         }, 10000);        
       });
     },
     createIndex: function(callback) {
-      client.indices.exists({ index: 'twitter'})
-        .then(function(exists) {
-          console.log("exists: ", exists);
-          if (exists) {
-            callback();
-            return;
-          }
-          client.indices.create({ index: 'twitter'}).catch(function (error) {
-            console.log("-- Error Creating Index --");
-            console.trace(error.message);
-          }).then(function (res) {
-            console.log("-- Created Index --");
-            client.indices.putMapping({
-              index: 'twitter',
-              type: 'tweet',
-              body: {
-              properties: { 
-                  created_at: { 
-                    "type":   "date",
-                    "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||EEE MMM dd HH:mm:ss ZZ YYYY"
-                   }
-              }
+
+      for (var i = 0; i < indexes.allIndexes.length; i++) {
+         let currIndex = indexes.allIndexes[i];
+
+        client.indices
+          .exists({ index: currIndex })
+          .then(function (exists) {
+            if (exists) {
+              callback();
+              return;
             }
-          });
-          console.log("-- Put Mapping --");
 
-
-            callback();
+            client.indices.create({ index: currIndex})
+            .catch(function (error) {
+              console.log("-- Error Creating Index --");
+              console.trace(error.message); 
+            })
+            .then(function (res) {
+              console.log("-- Created Index " + currIndex + " ---");
+              client.indices.putMapping(mappings[currIndex])
+                .then(function() 
+                { 
+                  console.log("-- Put Mapping --"); 
+                  callback();
+                }).catch(function () { console.log("--- Error creating Index. ABORTING"); 
+              });
+            });
           });
-      }).catch(function(reason) {
-        console.log(reason);
-      });
+      }
     },
     dispose: function() {
       client.close();
