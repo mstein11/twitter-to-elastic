@@ -11,6 +11,9 @@ var manager = {
         stream.on('tweet', function (tweet) {
             callback(tweet);
         })
+    },
+    get: function (path, params, callback) {
+        this.T.get(path, params, callback);
     }
 }
 

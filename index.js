@@ -4,7 +4,7 @@ var esManager = require('./elasticsearch/manager');
 var twitterManager = require('./twitter/manager');
 var indexes = require('./elasticsearch/indexes');
 
-
+console.log("Starting with Version 1-0-0-1")
 esManager.clusterReady(function(isReady) {
   if (isReady) {
     esManager.createIndex(_ => clusterReady());
@@ -40,7 +40,8 @@ function clusterReady() {
 var prepareTweet = function(tweet) {
   var user = tweet.user;
   tweet.user = {
-    id: user.id,
+    id: user.id_str,
+    id_str: user.id_str,
     name: user.name,
     screen_name: user.screen_name,
     location: user.location,
@@ -56,7 +57,7 @@ var prepareTweet = function(tweet) {
   if(tweet.retweeted_status) {
     var retweet = tweet.retweeted_status;
     tweet.retweeted_status = {
-      id: retweet.id
+      id_str: retweet.id_str
     };
     var res = prepareTweet(retweet);
     tweets = tweets.concat(res.tweets);
@@ -66,7 +67,7 @@ var prepareTweet = function(tweet) {
   if (tweet.quoted_status) {
     var quote = tweet.quoted_status;
     tweet.quoted_status = {
-      id: quote.id
+      id_str: quote.id_str
     };
     var res = prepareTweet(quote);
     tweets = tweets.concat(res.tweets);
